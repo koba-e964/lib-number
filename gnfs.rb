@@ -33,9 +33,11 @@ def get_afb(field,maxp,nqr=12)
     return afb
 end
 
-def gnfs_test0(koer,m,r=10,bmax=100)  
-	afb=get_afb(koer,20,32)
-	rfb=get_rfb(21)
+def gnfs_test0(koer,m,r=10,bmax=100)
+    amaxp=110
+    rmaxp=112
+	afb=get_afb(koer,amaxp,32)
+	rfb=get_rfb(rmaxp)
 	goal=rfb.size+afb.size+1
 	puts "|rfb|=#{rfb.size}, |afb|=#{afb.size}"
 	puts "The number of pairs needed: #{goal}"
@@ -110,6 +112,7 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 		a_prod=afb.compose(ans,orig)
 		a_prod_int=poly_apply(a_prod,m)%n
 		if(DEBUG0);puts "r_prod=#{r_prod}, a_prod=#{a_prod}, a_prod_int=#{a_prod_int}";end
+        #we must compute sqrt(a_prod).
 		if true #test
 			if (r_prod**2-a_prod_int)%n!=0
 				puts "Error! Case #{cnt-1}"
@@ -130,12 +133,10 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 end
 def gnfs_all() #attempts to factorize n=2594177=1049*2473
 # m=132 -> n=m^3+17m^2-15m-19
-    n=4094
-	#n=2594177
-    for m in [64]#[132]
+	n=2594177
+    for m in [132]
         print "m=";p m
-        #poly=base_exp(n,m).reverse
-        poly=[-2,0,1]
+        poly=base_exp(n,m).reverse
         print "poly=";p poly
         koer=Field.new(poly)
         rfb,afb,orig=gnfs_test0(koer,m,2000,200)
