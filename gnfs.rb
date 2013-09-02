@@ -1,6 +1,8 @@
 load './field.rb'
 load './alg.rb'
 
+DEBUG0=false
+
 def base_exp(n,radix=10)
 	ary=[]
 	while n>0
@@ -23,15 +25,17 @@ def get_afb(field,maxp,nqr=12)
 		cnt+=numbre
 		i+=1
 	end
-	for elem in afb.ary
-		p elem
+	if(DEBUG0)
+		for elem in afb.ary
+			p elem
+		end
 	end
 	return afb
 end
 
 def gnfs_test0(koer,m,r=10,bmax=100)  
-	afb=get_afb(koer,100,20)
-	rfb=get_rfb(50)
+	afb=get_afb(koer,200,32)
+	rfb=get_rfb(100)
 	goal=rfb.size+afb.size+1
 	puts "|rfb|=#{rfb.size}, |afb|=#{afb.size}"
 	puts "The number of pairs needed: #{goal}"
@@ -39,7 +43,7 @@ def gnfs_test0(koer,m,r=10,bmax=100)
 	cnt=0
 	puts "Sieving... (a:#{-r..r}, b:1..#{bmax})"
 	for b in 1..bmax
-		puts "b=#{b}, cnt=#{cnt}"
+		if DEBUG0;puts "b=#{b}, cnt=#{cnt}";end
 		if cnt>=goal
 			break
 		end
@@ -89,7 +93,7 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 	cnt=0
 	puts "The number of answers: #{answer.length}"
 	for ans in answer
-		puts "Case:#{cnt}/#{answer.length}"
+		if(DEBUG0);puts "Case:#{cnt}/#{answer.length}";end
 		cnt+=1
 		sum=Array.new(rfb.size).map{|v|0}
 		for i in 0..ans.length-1
@@ -105,7 +109,7 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 		r_prod=rfb.compose_mod(sum[0..rfb.size-1],n)
 		a_prod=afb.compose(ans,orig)
 		a_prod_int=poly_apply(a_prod,m)%n
-		puts "r_prod=#{r_prod}, a_prod=#{a_prod}, a_prod_int=#{a_prod_int}"
+		if(DEBUG0);puts "r_prod=#{r_prod}, a_prod=#{a_prod}, a_prod_int=#{a_prod_int}";end
 		if true #test
 			if (r_prod**2-a_prod_int)%n!=0
 				puts "Error! Case #{cnt-1}"
@@ -127,12 +131,11 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 end
 def gnfs_all() #attempts to factorize n=2594177=1049*2473
 # m=132 -> n=m^3+17m^2-15m-19
-	poly=[-19,-15,17,1]
-	#poly=[2,0,0,1]
+	n=2594177
+	m=111
+	poly=base_exp(n,m).reverse
+ 	print "poly=";p poly
 	koer=Field.new(poly)
-	m=13200
-	#m=11
-	n=poly_apply(poly,m);
 	rfb,afb,orig=gnfs_test0(koer,m,2000,200)
 	if orig.size-rfb.size-afb.size<=0
 		puts "Short of combination"
@@ -140,7 +143,8 @@ def gnfs_all() #attempts to factorize n=2594177=1049*2473
 	puts "Gauss Elim..."
 	reg,mat=gnfs_test1(orig)
 	puts "GE finished!!"
-	gnfs_test2(m,n,rfb,afb,reg,mat,orig)
+	gcds=gnfs_test2(m,n,rfb,afb,reg,mat,orig)
+	puts "gcds=";p gcds
 	puts "n=#{n},m=#{m}"
 end
 

@@ -1,5 +1,8 @@
+# -*- coding: cp932 -*-
 load './prime.rb'
 load './reci.rb'
+
+DEBUG_FIELD=false
 
 def poly_apply(poly,num)
 	val=0
