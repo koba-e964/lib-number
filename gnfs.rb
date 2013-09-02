@@ -30,12 +30,12 @@ def get_afb(field,maxp,nqr=12)
 			p elem
 		end
 	end
-	return afb
+    return afb
 end
 
 def gnfs_test0(koer,m,r=10,bmax=100)  
-	afb=get_afb(koer,200,32)
-	rfb=get_rfb(100)
+	afb=get_afb(koer,20,32)
+	rfb=get_rfb(21)
 	goal=rfb.size+afb.size+1
 	puts "|rfb|=#{rfb.size}, |afb|=#{afb.size}"
 	puts "The number of pairs needed: #{goal}"
@@ -115,8 +115,7 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 				puts "Error! Case #{cnt-1}"
 			end
 		end
-		next
-		g=gcd(n,r_prod+a_prod_int)
+		g=gcd(n,r_prod-a_prod_int)
 		if gcds.index(g)!=nil
 			next
 		end
@@ -131,20 +130,24 @@ def gnfs_test2(m,n,rfb,afb,reg,mat,orig)
 end
 def gnfs_all() #attempts to factorize n=2594177=1049*2473
 # m=132 -> n=m^3+17m^2-15m-19
-	n=2594177
-	m=111
-	poly=base_exp(n,m).reverse
- 	print "poly=";p poly
-	koer=Field.new(poly)
-	rfb,afb,orig=gnfs_test0(koer,m,2000,200)
-	if orig.size-rfb.size-afb.size<=0
-		puts "Short of combination"
-	end
-	puts "Gauss Elim..."
-	reg,mat=gnfs_test1(orig)
-	puts "GE finished!!"
-	gcds=gnfs_test2(m,n,rfb,afb,reg,mat,orig)
-	puts "gcds=";p gcds
-	puts "n=#{n},m=#{m}"
+    n=4094
+	#n=2594177
+    for m in [64]#[132]
+        print "m=";p m
+        #poly=base_exp(n,m).reverse
+        poly=[-2,0,1]
+        print "poly=";p poly
+        koer=Field.new(poly)
+        rfb,afb,orig=gnfs_test0(koer,m,2000,200)
+        if orig.size-rfb.size-afb.size<=0
+            puts "Short of combination"
+        end
+        puts "Gauss Elim..."
+        reg,mat=gnfs_test1(orig)
+        puts "GE finished!!"
+        gcds=gnfs_test2(m,n,rfb,afb,reg,mat,orig)
+        print "gcds=";p gcds
+        puts "n=#{n},m=#{m}"
+    end
 end
 
