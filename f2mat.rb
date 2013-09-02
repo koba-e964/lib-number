@@ -94,8 +94,11 @@ def gauss_elim(mat) #p*mat=res, [p,res]
 	mat2.ary=mat.ary.map{|v|v.clone}
 	p=unity mat2.m
 	r=0
+ 	interv=mat2.n/10
 	for i in 0..mat2.n-1
-		puts "processing column #{i}/#{mat.n}\r"
+		if i%interv==0
+			puts "processing column #{i}/#{mat.n}\r"
+		end
 		if r>=mat2.m
 			break
 		end
