@@ -1,7 +1,37 @@
 load './prime.rb'
+
+#checks whether g is a primitive root of (Z/pZ)^*
+#the primality of p is not checked in this function.
+def primitive_root?(g,p)
+    dec=factorize(p-1)
+    for v in dec
+        if modPower(g,(p-1)/v[0],p)==1
+            return false
+        end
+    end
+    return true
+end
+def primitive_root(p)
+    if !mr_prime(p)
+        raise Exception
+    end
+    g=2
+    while g<p
+        if primitive_root?(g,p)
+            return g
+        end
+        g+=1
+    end
+    raise Exception
+end
+
+
 def general_rho(b,a,p)
 	if !mr_prime(p)
-        raise Exception 
+        raise Exception('p='+p.to_s+' is not prime')
+    end
+    if(!primitive_root?(b,p))
+       raise Exception.new('b='+b.to_s+' is not a primitive root (p='+p.to_s+')') 
     end
     trial=1000
     for i in 0...trial
