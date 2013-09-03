@@ -9,7 +9,7 @@ def general_rho(b,a,p) #log_b(a mod p)
     t1=[1,0,0]
     i=0
     solved=false
-    while !solved
+    while !solved && i<p
         t0=gr_next(t0,p,u,v,a,b)
         t1=gr_next(t1,p,u,v,a,b)
         t1=gr_next(t1,p,u,v,a,b) #twice
@@ -23,24 +23,20 @@ def general_rho(b,a,p) #log_b(a mod p)
             mg=gcd(m,p-1)
             if mg==1
                 print (n.to_s+'/'+m.to_s+' mod '+(p-1).to_s)
-                for v in 0..p-1
-                    if (v*m-n)%(p-1)==0
-                        puts '='+v.to_s
-                        solved=true
-                        break
-                    end
-                end
+                puts '='+((n*ext_gcd(m,p-1)[1])%(p-1)).to_s
+                solved=true
+                break
             else
                 print(n.to_s+'/'+m.to_s+' mod '+(p-1).to_s)
-                for v in 0..p-1
-                    if (v*m-n)%(p-1)==0
-                        puts '='+v.to_s+'+'+((p-1)/mg).to_s+'Z'
-                        break
-                    end
-                end
+                res=ext_gcd(m,p-1)
+                mod=(p-1)/mg
+                puts '='+(n*res[1]%mod).to_s+'+'+mod.to_s+'Z'
             end
         end
         i+=1
+    end
+    if(!solved)
+        puts 'failed to find proper (m,n)'
     end
 end
 
