@@ -143,7 +143,7 @@ class Field
 		rat%ideal[0]==0
 	end
 	def quad_res(ideal,eta) #ideal: [p,[a,b]], eta:[a,b,c,...]
-		rat=poly_fapply(eta,-ideal[1][1],ideal[1][0])	
+		rat=poly_fapply(eta,ideal[1][1],-ideal[1][0])*(ideal[1][1]**(eta.length-1))
 		return quad_res_rat(rat,ideal[0])
 	end
 	def add(alpha,beta)
