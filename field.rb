@@ -51,7 +51,11 @@ def poly_div(pa,pb) #pa=pb*res[0]+res[1],in field
 	elsif degb==0
 		return [pa.map{|v|v/pb[0]},[0]]
 	end
-	i=poly_degree(pa)-degb
+	dega=poly_degree(pa)
+	if(dega==nil)
+		return [[0],[0]]
+	end
+	i=dega-degb
 	while i>=0
 		q=pa[i+degb]/pb[degb]
 		result[i]=q
@@ -111,7 +115,9 @@ def poly_add(pa,pb)
 	end
 	return result
 end
-
+def poly_mod(p,mod)
+	return p.map{|v|v%mod}
+end
 
 #ideal: [p,[a,b]]‚ÌŒ`‚ð‚µ‚Ä‚¢‚é(p,a+b*theta)
 #alg num:[a_0, a_1, ...]‚ÌŒ`‚ð‚µ‚Ä‚¢‚é(a_0+a_1*theta+...)
@@ -152,7 +158,9 @@ class Field
 	def add_mod(alpha,bet,mod)
 		return poly_add_mod(alpha,beta,mod)
 	end
-
+	def mod(alpha,mod)
+		return poly_mod(alpha,mod)
+	end
 	def mult(alpha,beta)
 		poly_div(poly_mult(alpha,beta),self.f)[1]
 	end
@@ -181,10 +189,21 @@ class Field
 		sum=[1]
 		cur=alpha
 		while n>0
-			sum=self.mult_mod(cur,sum,mod)
+			if n%2!=0
+				sum=self.mult_mod(cur,sum,mod)
+			end
 			cur=self.mult_mod(cur,cur,mod)
 			n/=2
 		end
+		return sum
+	end
+	def eq(alpha,beta)
+		dega=poly_degree(alpha)
+		if(dega==nil);dega=-1;end
+		degb=poly_degree(beta)
+		if(degb==nil);degb=-1;end
+		if(dega!=degb);return false;end
+		return alpha[0..dega]==beta[0..degb]
 	end
 end
 
