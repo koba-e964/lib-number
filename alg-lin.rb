@@ -1,5 +1,6 @@
 require 'matrix'
-load 'field.rb'
+require 'field.rb'
+load './gcd.rb'
 
 def alg_as_matrix_gen(k) #basis:1,theta,...,theta^(d-1)
 	f=k.f
@@ -47,3 +48,21 @@ def disc_gen_field(k)
 	return normdif
 end
 
+#mat‚Ì•ª•ê‚ð‚­‚­‚è‚¾‚µAintmat/denom‚ÌŒ`‚É‚·‚é(intmat‚Í®ŒW”s—ñ)
+# return [denom,intmat] (denom>0)
+def denom_out(mat)
+	denom=1
+	mat.each{|v|
+		if v.instance_of?(Rational)
+			q=v.denominator.abs
+			denom*=q/gcd(q,denom)
+		end}
+	a=mat.to_a
+	for v in a
+		for i in 0...v.size
+			v[i]*=denom
+			v[i]=v[i].to_i
+		end
+	end
+	return [denom,Matrix.rows(a)]
+end
