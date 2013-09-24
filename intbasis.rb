@@ -26,6 +26,7 @@ def p_maximal_order(k,p,n)
 			d=(d+p-1)/p
 			e+=1
 		end
+		d=k.dim
 		#p^e>=d
 		frob_init=[] #basis:initial
 		frob_o=[] #basis:order
@@ -39,7 +40,18 @@ def p_maximal_order(k,p,n)
 		end
 		puts frob_o.inspect
 		kernel=kernel_mod(frob_o,p)
-		puts "I_#{p}="+(kernel+(basis*p).to_a).inspect
+		i_p=(kernel+(basis*p).to_a)[0...d] #FIXME TODO BUGGY
+		i_p=Matrix.rows(i_p) #basis:order
+		puts "I_#{p}="+i_p.inspect
+		i_p_init=i_p*basis #basis:initial
+		for i in 0...d
+			for j in 0...d
+				prod_init=k.mult_mod(i_p_init.to_a[i],i_p_init.to_a[j],p*p)
+				prod_init=k.canon(prod_init)
+				prod_ip=Matrix.row_vector(prod_init)*i_p_init.inv
+				puts "e[#{i}]*e[#{j}]=(init)"+prod_init.inspect+", (I_p)"+prod_ip.inspect
+			end
+		end
 		n=0 #to terminate loop
 	end
 	nil
