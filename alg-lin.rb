@@ -45,7 +45,7 @@ def disc_gen_field(k)
 	if d%4==2||d%4==3
 		normdif*=-1
 	end
-	return normdif
+	return normdif.to_i
 end
 
 #mat‚Ì•ª•ê‚ğ‚­‚­‚è‚¾‚µAintmat/denom‚ÌŒ`‚É‚·‚é(intmat‚Í®ŒW”s—ñ)
