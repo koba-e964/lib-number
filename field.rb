@@ -1,8 +1,9 @@
 # -*- coding: cp932 -*-
 load './prime.rb'
 load './reci.rb'
+require './alg-lin.rb'
 
-DEBUG_FIELD=false
+$debug_field=false
 
 def poly_apply(poly,num)
 	val=0
@@ -204,6 +205,17 @@ class Field
 		if(degb==nil);degb=-1;end
 		if(dega!=degb);return false;end
 		return alpha[0..dega]==beta[0..degb]
+	end
+	def canon(alpha) #basis: 1,theta,...,theta^(dim-1)
+		rem=poly_div(alpha,self.f)[1]
+		while(rem.size<dim())
+			rem<<0
+		end
+		return rem
+	end
+	#discriminant of k's generator(theta)
+	def disc_gen()
+		return disc_gen_field(self)
 	end
 end
 
