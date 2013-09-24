@@ -166,7 +166,7 @@ class Field
 		poly_div(poly_mult(alpha,beta),self.f)[1]
 	end
 	def mult_mod(alpha,beta,mod)
-		poly_div(poly_mult_mod(alpha,beta,mod),self.f)[1]
+		mod(poly_div(poly_mult_mod(alpha,beta,mod),self.f)[1],mod)
 	end
 	def power(alpha,n)
 		if n<=0
