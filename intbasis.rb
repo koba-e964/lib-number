@@ -6,20 +6,35 @@ require './prime.rb'
 def integral_basis(k)
 	raise Exception unless k.instance_of?(Field)
 	disc=k.disc_gen()
-	fctr=factorize(disc) #2æˆÈã‚ÌŽw”‚ðŽ‚Â‘fˆö”‚ð’T‚·
+	fctr=factorize(disc)[1] #2æˆÈã‚ÌŽw”‚ðŽ‚Â‘fˆö”‚ð’T‚·
 	index=1
 	for p,n in fctr
 		#get p-maximal order of k.
-		
+		p_maximal_order(k,p,n)
 	end
+	nil
 end
 
 #round 2 method
 def p_maximal_order(k,p,n)
 	basis=Matrix.I(k.dim())
+	d=k.dim
 	while n>=2
-		
+		#calculate I_p={x in O|x^d in pO} 
+		e=0
+		while d>=2
+			d=(d+p-1)/p
+			e+=1
+		end
+		#p^e>=d
+		for alpha in basis.to_a
+			alpha_p=k.power_mod(alpha,p**e,p*p)
+			alpha_p=k.canon(alpha_p)
+			puts alpha.inspect+"^#{p**e}(mod #{p}^2)="+alpha_p.inspect
+		end
+		n=0 #to terminate loop
 	end
+	nil
 end
 
 #order, suborder is given by matrice
