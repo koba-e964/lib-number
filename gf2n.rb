@@ -1,6 +1,6 @@
 module GF2n
 	module_function
-	def gf2n_mul(a,b)
+	def multiply(a,b)
 		if(a<0||b<0)
 			raise
 		end
@@ -17,7 +17,7 @@ module GF2n
 
 	include Math
 
-	def gf2n_div(a,b)
+	def divide(a,b)
 		if(a<0||b<=0)
 			raise
 		end
@@ -32,7 +32,7 @@ module GF2n
 		return [q,a] #quotient,remainder
 	end
 	
-	def gf2n_pow(a,n)
+	def power(a,n)
 		if(n<0)
 			raise
 		end
@@ -40,15 +40,15 @@ module GF2n
 		c=a
 		while(n>0)
 			if(n%2==1)
-				s=gf2n_mul(s,c)
+				s=multiply(s,c)
 				end
-				c=gf2n_mul(c,c)
+				c=multiply(c,c)
 				n/=2
 			end
 			return s
 		end
 		
-	def gf2n_pow_mod(a,n,mod)
+	def power_mod(a,n,mod)
 		if(n<0)
 			raise
 		end
@@ -56,11 +56,11 @@ module GF2n
 		c=a
 		while(n>0)
 			if(n%2==1)
-				s=gf2n_mul(s,c)
-				s=gf2n_div(s,mod)[1]
+				s=multiply(s,c)
+				s=divide(s,mod)[1]
 			end
-			c=gf2n_mul(c,c)
-			c=gf2n_div(c,mod)[1]
+			c=multiply(c,c)
+			c=divide(c,mod)[1]
 			n/=2
 		end
 		return s
@@ -79,7 +79,7 @@ module GF2n
 			if i==val
 				next
 			end
-			if(gf2n_div(val,i)[1]==0)
+			if(divide(val,i)[1]==0)
 				return false
 			end
 		end
@@ -91,8 +91,8 @@ module GF2n
 		s=a
 		cnt=1
 		while(s!=1 && cnt<(1<<sm))
-			s=gf2n_mul(s,a)
-			s=gf2n_div(s,mod)[1]
+			s=multiply(s,a)
+			s=divide(s,mod)[1]
 			cnt+=1
 		end
 		if(cnt>=(1<<sm))
@@ -101,7 +101,7 @@ module GF2n
 		return cnt
 	end
 
-	def get_gf2n_prime(deg)
+	def get_prime(deg)
 		trial=0
 		while(trial<deg*10)
 			x=rand(1<<deg)
@@ -112,7 +112,7 @@ module GF2n
 				return po
 			end
 		end
-		raise Exception.new('not found (deg='.deg.to_s+')')
+		raise Exception.new('not found (deg='+deg.to_s+')')
 	end
 	
 	def test_get_prime_count(deg)
@@ -127,7 +127,7 @@ module GF2n
 end #module GF2n
 
 class GF2Poly
-	include GF2n
+	extend GF2n
 	attr_accessor :val
 	def initialize(val)
 		self.val=val
@@ -142,30 +142,30 @@ class GF2Poly
 		return GF2Poly.new(self.val^ano.val)
 	end
 	def mul(ano)
-		return GF2Poly.new(gf2n_mul(self.val,ano.val))
+		return GF2Poly.new(multiply(self.val,ano.val))
 	end
 	def *(ano)
 		if(ano.is_a?Integer)
 			ano=GF2Poly.new(ano%2)
 		end
-		return GF2Poly.new(gf2n_mul(self.val,ano.val))
+		return GF2Poly.new(multiply(self.val,ano.val))
 	end
 	def div(ano)
-		res=gf2n_div(self.val,ano.val)
+		res=divide(self.val,ano.val)
 		return [GF2Poly.new(res[0]),GF2Poly.new(res[1])]
 	end
 	def /(ano)
 		if(ano.is_a?Integer)
 			ano=GF2Poly.new(ano%2)
 		end
-		res=gf2n_div(self.val,ano.val)
+		res=divide(self.val,ano.val)
 		return [GF2Poly.new(res[0]),GF2Poly.new(res[1])]
 	end
 	def pow(n)
-		return GF2Poly.new(gf2n_pow(self.val,n))
+		return GF2Poly.new(power(self.val,n))
 	end
 	def **(n)
-		return GF2Poly.new(gf2n_pow(self.val,n))
+		return GF2Poly.new(power(self.val,n))
 	end
 	def deg()
 		if self.val==0
@@ -214,7 +214,7 @@ class GF2Poly
 		return str
 	end
 	def self.generate_prime(size)
-		return get_gf2n_prime(size)
+		return get_prime(size)
 	end
 	def self.x()
 		return GF2Poly.new(2)
