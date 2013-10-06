@@ -1,70 +1,133 @@
-def gf2n_mul(a,b)
-	if(a<0||b<0)
-		raise
-	end
-	sum=0
-	while b>0
-		if(b%2==1)
-			sum^=a
+module GF2n
+	module_function
+	def gf2n_mul(a,b)
+		if(a<0||b<0)
+			raise
 		end
-		b/=2
-		a*=2
-	end
-	sum
-end
-
-include Math
-
-def gf2n_div(a,b)
-	if(a<0||b<=0)
-		raise
-	end
-	q=0
-	sb=log2(b).to_i()
-	th=1<<sb
-	while(a>=th)
-		sa=log2(a).to_i()
-		a^=b<<(sa-sb)
-		q^=1<<(sa-sb)
-	end
-	return [q,a] #quotient,remainder
-end
-
-def gf2n_pow(a,n)
-	if(n<0)
-		raise
-	end
-	s=1
-	c=a
-	while(n>0)
-		if(n%2==1)
-			s=gf2n_mul(s,c)
+		sum=0
+		while b>0
+			if(b%2==1)
+				sum^=a
+			end
+			b/=2
+			a*=2
 		end
-		c=gf2n_mul(c,c)
-		n/=2
+		sum
 	end
-	return s
-end
 
-def gf2n_pow_mod(a,n,mod)
-	if(n<0)
-		raise
+	include Math
+
+	def gf2n_div(a,b)
+		if(a<0||b<=0)
+			raise
+		end
+		q=0
+		sb=log2(b).to_i()
+		th=1<<sb
+		while(a>=th)
+			sa=log2(a).to_i()
+			a^=b<<(sa-sb)
+			q^=1<<(sa-sb)
+		end
+		return [q,a] #quotient,remainder
 	end
-	s=1
-	c=a
-	while(n>0)
-		if(n%2==1)
-			s=gf2n_mul(s,c)
+	
+	def gf2n_pow(a,n)
+		if(n<0)
+			raise
+		end
+		s=1
+		c=a
+		while(n>0)
+			if(n%2==1)
+				s=gf2n_mul(s,c)
+				end
+				c=gf2n_mul(c,c)
+				n/=2
+			end
+			return s
+		end
+		
+	def gf2n_pow_mod(a,n,mod)
+		if(n<0)
+			raise
+		end
+		s=1
+		c=a
+		while(n>0)
+			if(n%2==1)
+				s=gf2n_mul(s,c)
+				s=gf2n_div(s,mod)[1]
+			end
+			c=gf2n_mul(c,c)
+			c=gf2n_div(c,mod)[1]
+			n/=2
+		end
+		return s
+	end
+	def isPrime(poly)
+		raise Exception unless poly.is_a?GF2Poly
+		val=poly.val
+		if(val==0)
+			return false
+		end
+		sn=log2(val).to_i
+		if sn==0
+			return false
+		end
+		for i in 2..1<<(sn/2+1)
+			if i==val
+				next
+			end
+			if(gf2n_div(val,i)[1]==0)
+				return false
+			end
+		end
+		return true
+	end
+	
+	def exponent(a,mod)
+		sm=log2(mod)
+		s=a
+		cnt=1
+		while(s!=1 && cnt<(1<<sm))
+			s=gf2n_mul(s,a)
 			s=gf2n_div(s,mod)[1]
+			cnt+=1
 		end
-		c=gf2n_mul(c,c)
-		c=gf2n_div(c,mod)[1]
-		n/=2
+		if(cnt>=(1<<sm))
+			raise Exception("Error:too large exponent")
+		end
+		return cnt
 	end
-	return s
-end
+
+	def get_gf2n_prime(deg)
+		trial=0
+		while(trial<deg*10)
+			x=rand(1<<deg)
+			x+=1<<deg
+			x|=1
+			po=GF2Poly.new(x)
+			if(po.prime?)
+				return po
+			end
+		end
+		raise Exception.new('not found (deg='.deg.to_s+')')
+	end
+	
+	def test_get_prime_count(deg)
+		c=0
+		for i in (1<<(deg))...(1<<(deg+1))
+			if GF2Poly.new(i).prime?
+				c+=1
+			end
+		end
+		return c
+	end
+end #module GF2n
 
 class GF2Poly
+	include GF2n
 	attr_accessor :val
 	def initialize(val)
 		self.val=val
@@ -153,64 +216,8 @@ class GF2Poly
 	def self.generate_prime(size)
 		return get_gf2n_prime(size)
 	end
+	def self.x()
+		return GF2Poly.new(2)
+	end
 end
 
-def isPrime(poly)
-	raise Exception unless poly.is_a?GF2Poly
-	val=poly.val
-	if(val==0)
-		return false
-	end
-	sn=log2(val).to_i
-	if sn==0
-		return false
-	end
-	for i in 2..1<<(sn/2+1)
-		if i==val
-			next
-		end
-		if(gf2n_div(val,i)[1]==0)
-			return false
-		end
-	end
-	return true
-end
-
-def exponent(a,mod)
-	sm=log2(mod)
-	s=a
-	cnt=1
-	while(s!=1 && cnt<(1<<sm))
-		s=gf2n_mul(s,a)
-		s=gf2n_div(s,mod)[1]
-		cnt+=1
-	end
-	if(cnt>=(1<<sm))
-		raise Exception("Error:too large exponent")
-	end
-	return cnt
-end
-
-def get_gf2n_prime(deg)
-	trial=0
-	while(trial<deg*10)
-		x=rand(1<<deg)
-		x+=1<<deg
-		x|=1
-		po=GF2Poly.new(x)
-		if(po.prime?)
-			return po
-		end
-	end
-	raise Exception.new('not found (deg='.deg.to_s+')')
-end
-
-def test_get_prime_count(deg)
-	c=0
-	for i in (1<<(deg))...(1<<(deg+1))
-		if GF2Poly.new(i).prime?
-			c+=1
-		end
-	end
-	return c
-end
