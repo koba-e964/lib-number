@@ -127,12 +127,16 @@ module GF2n
 end #module GF2n
 
 class GF2Poly
-	extend GF2n
+	include GF2n
+	include Math
 	attr_accessor :val
 	def initialize(val)
 		self.val=val
 	end
 	def add(ano)
+		if(ano.is_a?Integer)
+			ano=GF2Poly.new(ano%2)
+		end
 		return GF2Poly.new(self.val^ano.val)
 	end
 	def +(ano)
@@ -142,6 +146,9 @@ class GF2Poly
 		return GF2Poly.new(self.val^ano.val)
 	end
 	def mul(ano)
+		if(ano.is_a?Integer)
+			ano=GF2Poly.new(ano%2)
+		end
 		return GF2Poly.new(multiply(self.val,ano.val))
 	end
 	def *(ano)
@@ -151,15 +158,17 @@ class GF2Poly
 		return GF2Poly.new(multiply(self.val,ano.val))
 	end
 	def div(ano)
-		res=divide(self.val,ano.val)
-		return [GF2Poly.new(res[0]),GF2Poly.new(res[1])]
-	end
-	def /(ano)
 		if(ano.is_a?Integer)
 			ano=GF2Poly.new(ano%2)
 		end
 		res=divide(self.val,ano.val)
 		return [GF2Poly.new(res[0]),GF2Poly.new(res[1])]
+	end
+	def /(ano)
+		return div(ano)[0]
+	end
+	def %(ano)
+		return div(ano)[1]
 	end
 	def pow(n)
 		return GF2Poly.new(power(self.val,n))
@@ -176,7 +185,7 @@ class GF2Poly
 	def gcd(ano)
 		x=self
 		y=ano
-		while(y.dim!=nil)
+		while(y.deg!=nil)
 			r=x.div(y)[1]
 			x=y
 			y=r
