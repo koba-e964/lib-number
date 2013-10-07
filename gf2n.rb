@@ -1,3 +1,4 @@
+load 'gcd.rb'
 module GF2n
 	module_function
 	include Math
@@ -20,6 +21,46 @@ module GF2n
 			end
 		end
 		return true
+	end
+	def isPrimeFast2(poly)
+		raise Exception unless poly.is_a?GF2Poly
+		if(poly==0||poly==1)
+			return false
+		end
+		deg=poly.deg()
+		if deg==1
+			return true #poly=x or x+1
+		end
+		x=GF2Poly::x
+		lcm=1
+		for r in 1..deg/2 #r>=1
+			nt=(1<<r)-1
+			lcm*=nt/gcd(nt,lcm)
+		end
+		sum=x.pow_mod(lcm,poly)
+		sum+=1
+		sum*=x
+		gcd=poly.gcd(sum)
+		return gcd==1
+	end
+	def test_isPrime()
+		trial=0
+		err=0
+		while trial<100
+			v=rand(1<<100)
+			po=GF2Poly.new(v)
+			t1=Time.now
+			r1=isPrimeFast(po)
+			t2=Time.now
+			r2=isPrimeFast2(po)
+			t3=Time.now
+			if(r1!=r2)
+				p [po,r1,r2]
+			end
+			p [t2-t1,t3-t2]
+			trial+=1
+		end
+		puts err.to_s+'/'+trial.to_s
 	end
 
 	def get_prime(deg)
