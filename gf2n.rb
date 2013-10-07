@@ -85,7 +85,40 @@ module GF2n
 		end
 		return true
 	end
-	
+	def isPrimeFast(poly)
+		raise Exception unless poly.is_a?GF2Poly
+		deg=poly.deg()
+		if(deg.nil?||deg==0)
+			return false
+		end
+		if deg==1
+			return true #poly=x or x+1
+		end
+		x=GF2Poly::x
+		for r in 1..deg/2 #r>=1
+			q=x.pow_mod(1<<r,poly)
+			q+=x
+			gcd=poly.gcd(q)
+			if gcd.val!=1
+				return false
+			end
+		end
+		return true
+	end
+	def test_isPrime()
+		trial=0
+		err=0
+		while trial<100
+			v=rand(1<<17)
+			v=GF2Poly.new(v)
+			if(isPrime(v)!=isPrimeFast(v))
+				err+=1
+				p [v,isPrime(v),isPrimeFast(v)]
+			end
+			trial+=1
+		end
+		puts err.to_s+'/'+trial.to_s
+	end
 	def exponent(a,mod)
 		sm=log2(mod)
 		s=a
@@ -175,6 +208,12 @@ class GF2Poly
 	end
 	def pow(n)
 		return GF2Poly.new(power(self.val,n))
+	end
+	def pow_mod(n,mod)
+		if mod.is_a?Integer
+			mod=GF2Poly.new(mod%2)
+		end
+		return GF2Poly.new(power_mod(self.val,n,mod.val))
 	end
 	def **(n)
 		return GF2Poly.new(power(self.val,n))
