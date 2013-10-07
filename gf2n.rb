@@ -131,6 +131,9 @@ class GF2Poly
 	include Math
 	attr_accessor :val
 	def initialize(val)
+		if val<0
+			raise 'val=-0x'+(-val).to_s(16)+'<0, which is invalid'
+		end
 		self.val=val
 	end
 	def add(ano)
@@ -183,6 +186,9 @@ class GF2Poly
 		return log2(self.val).to_i()
 	end
 	def gcd(ano)
+		if(ano.is_a?Integer)
+			ano=GF2Poly.new(ano%2)
+		end
 		x=self
 		y=ano
 		while(y.deg!=nil)
