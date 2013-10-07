@@ -115,11 +115,16 @@ module GF2n
 	end
 	
 	def test_get_prime_count(deg)
+		if(deg==1)
+			return 2
+		end
 		c=0
-		for i in (1<<(deg))...(1<<(deg+1))
+		i=(1<<(deg))+1
+		while i<(1<<(deg+1))
 			if GF2Poly.new(i).prime?
 				c+=1
 			end
+			i+=2
 		end
 		return c
 	end
@@ -128,6 +133,7 @@ end #module GF2n
 class GF2Poly
 	include GF2n
 	include Math
+	extend GF2n
 	attr_accessor :val
 	def initialize(val)
 		if val<0
