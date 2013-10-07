@@ -65,26 +65,6 @@ module GF2n
 		end
 		return s
 	end
-	def isPrime(poly)
-		raise Exception unless poly.is_a?GF2Poly
-		val=poly.val
-		if(val==0)
-			return false
-		end
-		sn=log2(val).to_i
-		if sn==0
-			return false
-		end
-		for i in 2..1<<(sn/2+1)
-			if i==val
-				next
-			end
-			if(divide(val,i)[1]==0)
-				return false
-			end
-		end
-		return true
-	end
 	def isPrimeFast(poly)
 		raise Exception unless poly.is_a?GF2Poly
 		deg=poly.deg()
@@ -104,20 +84,6 @@ module GF2n
 			end
 		end
 		return true
-	end
-	def test_isPrime()
-		trial=0
-		err=0
-		while trial<100
-			v=rand(1<<17)
-			v=GF2Poly.new(v)
-			if(isPrime(v)!=isPrimeFast(v))
-				err+=1
-				p [v,isPrime(v),isPrimeFast(v)]
-			end
-			trial+=1
-		end
-		puts err.to_s+'/'+trial.to_s
 	end
 	def exponent(a,mod)
 		sm=log2(mod)
@@ -242,7 +208,7 @@ class GF2Poly
 		return exponent(self.val,mod.val)
 	end
 	def prime?()
-		return isPrime(self)
+		return isPrimeFast(self)
 	end
 	def to_s()
 		return format("Poly[%x]",self.val)
