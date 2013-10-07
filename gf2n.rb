@@ -242,6 +242,18 @@ class GF2Poly
 	def self.generate_prime(size)
 		return get_prime(size)
 	end
+	def self.generate_minimal_prime(size)
+		raise 'size<=0' if(size<=0)
+		v=1<<size
+		while(v<1<<(size+1))
+			po=GF2Poly.new(v)
+			if(po.prime?)
+				return po
+			end
+			v+=1
+		end
+		raise 'error'
+	end
 	def self.x()
 		return GF2Poly.new(2)
 	end
