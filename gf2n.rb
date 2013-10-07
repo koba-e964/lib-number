@@ -1,76 +1,12 @@
 module GF2n
 	module_function
-	def multiply(a,b)
-		if(a<0||b<0)
-			raise
-		end
-		sum=0
-		while b>0
-			if(b%2==1)
-				sum^=a
-			end
-			b/=2
-			a*=2
-		end
-		sum
-	end
-
 	include Math
-
-	def divide(a,b)
-		if(a<0||b<=0)
-			raise
-		end
-		q=0
-		sb=log2(b).to_i()
-		th=1<<sb
-		while(a>=th)
-			sa=log2(a).to_i()
-			a^=b<<(sa-sb)
-			q^=1<<(sa-sb)
-		end
-		return [q,a] #quotient,remainder
-	end
-	
-	def power(a,n)
-		if(n<0)
-			raise
-		end
-		s=1
-		c=a
-		while(n>0)
-			if(n%2==1)
-				s=multiply(s,c)
-				end
-				c=multiply(c,c)
-				n/=2
-			end
-			return s
-		end
-		
-	def power_mod(a,n,mod)
-		if(n<0)
-			raise
-		end
-		s=1
-		c=a
-		while(n>0)
-			if(n%2==1)
-				s=multiply(s,c)
-				s=divide(s,mod)[1]
-			end
-			c=multiply(c,c)
-			c=divide(c,mod)[1]
-			n/=2
-		end
-		return s
-	end
 	def isPrimeFast(poly)
 		raise Exception unless poly.is_a?GF2Poly
-		deg=poly.deg()
-		if(deg.nil?||deg==0)
+		if(poly==0||poly==1)
 			return false
 		end
+		deg=poly.deg()
 		if deg==1
 			return true #poly=x or x+1
 		end
@@ -79,25 +15,11 @@ module GF2n
 			q=x.pow_mod(1<<r,poly)
 			q+=x
 			gcd=poly.gcd(q)
-			if gcd.val!=1
+			if gcd!=1
 				return false
 			end
 		end
 		return true
-	end
-	def exponent(a,mod)
-		sm=log2(mod)
-		s=a
-		cnt=1
-		while(s!=1 && cnt<(1<<sm))
-			s=multiply(s,a)
-			s=divide(s,mod)[1]
-			cnt+=1
-		end
-		if(cnt>=(1<<sm))
-			raise Exception("Error:too large exponent")
-		end
-		return cnt
 	end
 
 	def get_prime(deg)
@@ -157,20 +79,36 @@ class GF2Poly
 		if(ano.is_a?Integer)
 			ano=GF2Poly.new(ano%2)
 		end
-		return GF2Poly.new(multiply(self.val,ano.val))
+		a=self.val
+		b=ano.val
+		sum=0
+		while b>0
+			if(b%2==1)
+				sum^=a
+			end
+			b/=2
+			a*=2
+		end
+		GF2Poly.new(sum)
 	end
 	def *(ano)
-		if(ano.is_a?Integer)
-			ano=GF2Poly.new(ano%2)
-		end
-		return GF2Poly.new(multiply(self.val,ano.val))
+		mul(ano)
 	end
 	def div(ano)
 		if(ano.is_a?Integer)
 			ano=GF2Poly.new(ano%2)
 		end
-		res=divide(self.val,ano.val)
-		return [GF2Poly.new(res[0]),GF2Poly.new(res[1])]
+		a=self.val
+		b=ano.val
+		q=0
+		sb=log2(b).to_i()
+		th=1<<sb
+		while(a>=th)
+			sa=log2(a).to_i()
+			a^=b<<(sa-sb)
+			q^=1<<(sa-sb)
+		end
+		return [GF2Poly.new(q),GF2Poly.new(a)] #quotient,remainder
 	end
 	def /(ano)
 		return div(ano)[0]
@@ -179,16 +117,42 @@ class GF2Poly
 		return div(ano)[1]
 	end
 	def pow(n)
-		return GF2Poly.new(power(self.val,n))
+		if(n<0)
+			raise
+		end
+		s=GF2Poly.new(1)
+		c=self
+		while(n>0)
+			if(n%2==1)
+				s*=c
+			end
+			c*=c
+			n/=2
+		end
+		return s
 	end
 	def pow_mod(n,mod)
 		if mod.is_a?Integer
 			mod=GF2Poly.new(mod%2)
 		end
-		return GF2Poly.new(power_mod(self.val,n,mod.val))
+		if(n<0)
+			raise
+		end
+		s=GF2Poly.new(1)
+		c=self
+		while(n>0)
+			if(n%2==1)
+				s*=c
+				s%=mod
+			end
+			c*=c
+			c%=mod
+			n/=2
+		end
+		return s
 	end
 	def **(n)
-		return GF2Poly.new(power(self.val,n))
+		pow(n)
 	end
 	def ==(ano)
 		if(ano.is_a?Integer)
@@ -208,8 +172,8 @@ class GF2Poly
 		end
 		x=self
 		y=ano
-		while(y.deg!=nil)
-			r=x.div(y)[1]
+		while(y!=0)
+			r=x%y
 			x=y
 			y=r
 		end
@@ -217,7 +181,18 @@ class GF2Poly
 	end
 	def exp(mod)
 		raise Exception unless mod.instance_of? GF2Poly
-		return exponent(self.val,mod.val)
+		sm=mod.deg
+		s=self
+		cnt=1
+		while(s!=1 && cnt<(1<<sm))
+			s*=a
+			s%=mod
+			cnt+=1
+		end
+		if(cnt>=(1<<sm))
+			raise Exception("Error:too large exponent")
+		end
+		return cnt
 	end
 	def prime?()
 		return isPrimeFast(self)
@@ -227,10 +202,10 @@ class GF2Poly
 	end
 	def inspect()
 		str=self.class.name+":"
-		d=deg()
-		if d.nil?
+		if self==0
 			return str+'0'
 		end
+		d=deg()
 		nt=0
 		i=d
 		while i>=0
