@@ -190,6 +190,12 @@ class GF2Poly
 	def **(n)
 		return GF2Poly.new(power(self.val,n))
 	end
+	def ==(ano)
+		if(ano.is_a?Integer)
+			ano=GF2Poly.new(ano%2)
+		end
+		return val==ano.val
+	end
 	def deg()
 		if self.val==0
 			return nil
