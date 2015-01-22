@@ -32,3 +32,34 @@ def ext_gcd(a,b)
   end
   return [a,g0%(oldb/a)]
 end
+
+def binary_gcd(a, b)
+  if a == 0
+    return b
+  end
+  if b == 0
+    return a
+  end
+  a = a.abs
+  b = b.abs
+  shift = 0
+  while (((a | b) & 1) == 0)
+    a >>= 1
+    b >>= 1
+    shift += 1
+  end
+  while ((a & 1) == 0)
+    a >>= 1
+  end
+  while b != 0
+    while (b & 1) == 0; b >>= 1; end
+    if a > b
+      t = a
+      a = b
+      b = t
+    end
+    b -= a
+  end
+  return a << shift
+end
+
