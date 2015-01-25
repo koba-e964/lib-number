@@ -1,7 +1,7 @@
 # -*- coding: cp932 -*-
-load './prime.rb'
-load './reci.rb'
-require './alg-lin.rb'
+require_relative './prime.rb'
+require_relative './reci.rb'
+require_relvative './alg-lin.rb'
 
 $debug_field=false
 

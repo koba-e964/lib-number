@@ -1,4 +1,4 @@
-load './prime.rb'
+require_relative './prime.rb'
 
 def quad_res_rat(a,p)
 	if p%2==0

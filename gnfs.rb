@@ -1,5 +1,5 @@
-load './field.rb'
-load './alg.rb'
+require_relative './field.rb'
+require_relative './alg.rb'
 
 DEBUG0=false
 

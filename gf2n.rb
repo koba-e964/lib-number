@@ -1,4 +1,4 @@
-load 'gcd.rb'
+require_relative 'gcd.rb'
 module GF2n
 	module_function
 	include Math

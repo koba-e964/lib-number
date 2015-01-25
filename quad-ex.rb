@@ -1,5 +1,5 @@
-load './prime.rb'
-load './quad.rb'
+require_relative './prime.rb'
+require_relative './quad.rb'
 
 def calc(p)
 	sum=0

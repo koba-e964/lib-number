@@ -1,5 +1,5 @@
-load './prime.rb'
-load './reci.rb'
+require_relative './prime.rb'
+require_relative './reci.rb'
 
 def modsqrt(a,p)
   if p<0

@@ -1,4 +1,4 @@
-load './gcd.rb'
+require_relative './gcd.rb'
 
 
 

@@ -1,6 +1,6 @@
-require 'matrix'
-require 'field.rb'
-load './gcd.rb'
+require_relative 'matrix'
+require_relative 'field.rb'
+require_relative './gcd.rb'
 
 def alg_as_matrix_gen(k) #basis:1,theta,...,theta^(d-1)
 	f=k.f

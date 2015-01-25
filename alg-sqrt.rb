@@ -1,5 +1,5 @@
-load 'field.rb'
-load 'modsqrt.rb'
+require_relative 'field.rb'
+require_relative 'modsqrt.rb'
 
 
 def alg_sqrt_base(k,a,p)  # k:field, a:algebraic integer in k, p:rational prime

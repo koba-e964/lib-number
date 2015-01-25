@@ -1,4 +1,4 @@
-load './gcd.rb'
+require_relative './gcd.rb'
 
 def xeucl(a,b)
   x1=1

@@ -1,4 +1,4 @@
-load './prime.rb'
+require_relative './prime.rb'
 
 
 def lucas_test(n)

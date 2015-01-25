@@ -1,5 +1,5 @@
-load './quad.rb'
-load './f2mat.rb'
+require_relative './quad.rb'
+require_relative './f2mat.rb'
 
 
 class QFB #factor base
