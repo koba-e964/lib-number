@@ -10,49 +10,41 @@ def bit_size(n)
   raise Exception.new("unreachable")
 end
 
+# a mod 2^n if 0 <= a < 2^2n
+def reduce_2n1(a, n)
+  b = a >> n
+  a = a & ((1 << n) - 1)
+  r = a - b
+  if r < 0
+    return r + (1 << n) + 1
+  end
+  return r
+end
+
+
 def fft_array_sub(ary, k, start, interval, len, output, ostart, n)
   if len == 1
     output[ostart] = ary[start]
     return nil
   end
   mod = (1 << n) + 1
-  fft_array_sub(ary, 2 * k, start, interval * 2, len / 2, output, ostart, n)
-  fft_array_sub(ary, 2 * k, start + interval, interval * 2, len / 2, output, ostart + len / 2, n)
+  newk = (2 * k) % (2 * n)
+  fft_array_sub(ary, newk, start, interval * 2, len / 2, output, ostart, n)
+  fft_array_sub(ary, newk, start + interval, interval * 2, len / 2, output, ostart + len / 2, n)
   for i in 0 ... (len / 2)
     shift = (i * k) % (2 * n)
-    t0 = output[ostart + i] % ((1 << n) + 1)
-    t1 = (output[ostart + i + len / 2] << shift) % ((1 << n) + 1)
+    t0 = output[ostart + i]
+    t1 = output[ostart + i + len / 2] << shift
     tmp0 = t0 + t1
-    tmp1 = t0 - t1
-    tmp0 %= (1 << n) + 1
-    tmp1 %= (1 << n) + 1
+    tmp1 = t0 - t1 + (1 << n) + 1
+    tmp0 = reduce_2n1(tmp0, n)
+    tmp1 = reduce_2n1(tmp1, n)
     output[ostart + i] = tmp0
     output[ostart + i + len / 2] = tmp1
   end
   return nil
 end
 
-def ifft_array_sub(ary, k, start, interval, len, output, ostart, n)
-  if len == 1
-    output[ostart] = ary[start]
-    return nil
-  end
-  mod = (1 << n) + 1
-  ifft_array_sub(ary, 2 * k, start, interval * 2, len / 2, output, ostart, n)
-  ifft_array_sub(ary, 2 * k, start + interval, interval * 2, len / 2, output, ostart + len / 2, n)
-  for i in 0 ... (len / 2)
-    shift = (i * (2 * n - k)) % (2 * n)
-    t0 = output[ostart + i] % ((1 << n) + 1)
-    t1 = (output[ostart + i + len / 2] << shift) % ((1 << n) + 1)
-    tmp0 = t0 + t1
-    tmp1 = t0 - t1
-    tmp0 %= (1 << n) + 1
-    tmp1 %= (1 << n) + 1
-    output[ostart + i] = tmp0
-    output[ostart + i + len / 2] = tmp1
-  end
-  return nil
-end
 
 
 # Computes ary[0] + ary[1] * 2^ik * ... * ary[size-1] * 2^((size-1)*i*k) mod 2^n + 1
@@ -63,16 +55,6 @@ def fft_array(ary, k, n)
   end
   output = Array.new(size)
   fft_array_sub(ary, k, 0, 1, size, output, 0, n)
-  return output
-end
-# Computes ary[0] + ary[1] * 2^(-ik) * ... * ary[size-1] * 2^(-(size-1)*i*k) mod 2^n + 1
-def ifft_array(ary, k, n)
-  size = ary.size
-  if (size & (-size)) != size
-    raise Exception.new("ary.size = #{size} is not a power of 2")
-  end
-  output = Array.new(size)
-  ifft_array_sub(ary, k, 0, 1, size, output, 0, n)
   return output
 end
 
@@ -92,7 +74,7 @@ def cyclic_convolution(ary1, ary2, n)
   tary2 = fft_array(ary2, k, n)
   mod = (1 << n) + 1
   tary3 = (0...ary1.size()).map{|i| (tary1[i] * tary2[i]) % mod}
-  cyc = ifft_array(tary3, k, n)
+  cyc = fft_array(tary3, 2 * n - k, n)
   shift = (- t) % (2 * n)
   return cyc.map{|v| (v << shift) % mod}
 end
