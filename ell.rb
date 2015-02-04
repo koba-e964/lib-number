@@ -1,18 +1,13 @@
 #curve: [p,a,b]
-def invmod(a,p)
-	cur=a
-	mul=1
-	exp=p-2
-	while exp>0
-		if exp%2==1
-			mul*=cur
-			mul%=p
-		end
-		cur*=cur
-		cur%=p
-		exp/=2
-	end
-	mul
+require_relative "./prime.rb"
+require_relative "./gcd.rb"
+
+def invmod(a, p)
+  g, i = ext_gcd(a, p)
+  if g != 1
+    raise Exception.new("#{p} has a factor #{g}")
+  end
+  return i
 end
 
 def divmod(a,b,p)
@@ -25,7 +20,7 @@ end
 
 def add(curve,p1,p2)
 	p=curve[0]
-	#if !isPrime(p)
+	#if !mr_prime(p)
 		#return nil
 	#end
 	if p1.length==0 #infinity
@@ -206,126 +201,6 @@ def period(curve,point)
 	return num
 end
 
-def isPrime(num)
-	if num<=1
-		return false
-	elsif num<=3
-		return true
-	end
-	if num%2==0
-		return false
-	elsif num%3==0
-		return false
-	end
-	div=5
-	while div*div<=num
-		if num%div==0 and num!=div
-			return false
-		elsif num%(div+2)==0 and num!=div+2
-			return false
-		end
-		div+=6
-	end
-	true
-end
-
-def modPower(a,b,mod)
-	mul=1
-	cur=a
-	while b>0
-		if b%2==1
-			mul*=cur
-			mul%=mod
-		end
-		cur*=cur
-		cur%=mod
-		b/=2
-	end
-	return mul
-end
-
-def mrTest(num,cert=20)
-	base=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127]
-	#base=[2]
-	for f in base
-		if num==f
-			return true
-		elsif num%f==0
-			return false
-		end
-	end
-	pwr2=0
-	quo=num-1
-	while quo%2==0
-		pwr2+=1
-		quo/=2
-	end
-	#num-1=quo*2**pwr2
-
-	for i in 1..cert
-		a=rand(num)
-		if a==0
-			a=1
-		end
-		res=modPower(a,quo,num)
-		#puts "a=#{a},quo=#{quo},a**quo=#{res}"
-		if res==1
-			next
-		end
-		for j in 1..pwr2
-			tmp=(res*res)%num #a**(quo*2**j)%num
-			if tmp==num-1
-				if j<pwr2
-					break
-				else
-					#puts "num={#num},prev=#{res},next=#{tmp},pwr2=#{pwr2},j=#{j}"
-					return false
-				end
-			elsif tmp==1
-				if res==num-1
-					break
-				end
-				
-				#puts "num=#{num},prev=#{res},next=#{tmp}"
-				return false
-			end
-			if tmp!=1 and j==pwr2
-				#puts "a(#{a})**(num-1)(#{num-1})=#{res}"
-				return false
-			end
-			res=tmp
-		end
-	end
-	return true
-end
-
-
-def getRandomPrime(length)
-	val=rand(1<<length)
-	val|=1<<(length-1)
-	val|=1
-	while 1
-		if isPrime(val)
-			return val
-		end
-		val+=2
-		val%=(1<<length)
-		val|=1<<(length-1)
-	end
-	nil
-end
-def getMRPrime(length)
-	val=(1<<(length-1))|(rand(1<<(length-2))<<1)|1
-	while 1
-		if mrTest(val,20)
-			return val
-		end
-		val+=2
-		val%=(1<<length)
-		val|=1<<(length-1)
-	end
-	nil
-end	
 
 include Math
 def getPrimePoint(curve)
@@ -340,7 +215,7 @@ def getPrimePoint(curve)
 		for i in 0..4*sp
 			if cur.length==0
 				#period=n_0+i
-				if isPrime(n_0+i)
+				if mr_prime(n_0+i)
 					p "Obtained the point:(#{init[0]},#{init[1]}),period=#{n_0+i}"
 					return n_0+i
 				else
@@ -354,7 +229,7 @@ def getPrimePoint(curve)
 	end
 end
 
-def getPrimePointType0(curve,debug=true) #ˆÊ”p‚Ì“_‚ð’T‚·
+def getPrimePointType0(curve,debug=true) #searches for a point of order p
 	p=curve[0]
 	trial=0
 	while trial<10000
@@ -398,7 +273,7 @@ def getNearPrime(p,x)
 	ary=[]
 	cur=p-x
 	for i in 0..2*x
-		if i!=x && mrTest(cur)
+		if i!=x && mr_prime(cur)
 			ary+=[cur]
 		end
 		cur+=1
