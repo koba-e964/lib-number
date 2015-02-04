@@ -5,7 +5,7 @@ require_relative "./gcd.rb"
 def invmod(a, p)
   g, i = ext_gcd(a, p)
   if g != 1
-    raise Exception.new("#{p} has a factor #{g}")
+    raise Exception.new("#{g} | #{p}")
   end
   return i
 end
