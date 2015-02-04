@@ -75,7 +75,7 @@ def mr_prime(num,cert=20)
 end
 
 def getRandomPrime(length)
-	val=rand(1<<length)
+	val=rand(1 << length)
 	val|=1<<(length-1)
 	val|=1
 	while 1
@@ -83,8 +83,8 @@ def getRandomPrime(length)
 			return val
 		end
 		val+=2
-		val%=(1<<length)
-		val|=1<<(length-1)
+		val%=(1 << length)
+		val|=1 << (length-1)
 	end
 	nil
 end
