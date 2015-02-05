@@ -29,6 +29,39 @@ def lenstra_elliptic_get_factor_one(n, b = 100, debug = 1)
   return []
 end
 
+def lenstra_elliptic_get_factor_one_pro(n, b = 100, debug = 1)
+  curve = [n, rand(n)]
+  pt = [rand(n), rand(n), 1]
+  cur = pt
+  ctrial = 0
+  
+  res = proMul(curve, pt, n)
+  g = gcd(res[2], n)
+  if g >= 2 && g < n
+    return [g, n / g]
+  end
+  for k in 2 .. b
+    ctrial = k
+    cur = proMul(curve, cur, k)
+    if debug >= 2
+      puts "#{k}! * #{pt} = #{cur}"
+    end
+    g = gcd(cur[2], n)
+    if g >= 2 && g < n
+      if debug >= 1
+        puts "Found factor #{g} in computation of #{ctrial}! * P"
+      end
+      return [g, n / g]
+    end
+  end
+  if debug >= 2
+    puts "failure... factor of #{n} was not found"
+  end
+  return []
+end
+
+include Math
+
 def lenstra_elliptic_get_factor(n, debug = 1)
   if mr_prime(n)
     if debug >= 2
@@ -36,13 +69,13 @@ def lenstra_elliptic_get_factor(n, debug = 1)
     end
     return [n]
   end
-  b = n.size * n.size * 16
+  b = (2.0 ** sqrt(n.size * 8 * log2(n.size))).to_i
   t = 0
   while true
     if debug >= 1
       puts "Trial #{t}... b = #{b}"
     end
-    res = lenstra_elliptic_get_factor_one(n, b, [debug - 1, 0].max)
+    res = lenstra_elliptic_get_factor_one_pro(n, b, [debug - 1, 0].max)
     if res != []
       return res
     end
