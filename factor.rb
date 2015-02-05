@@ -14,7 +14,7 @@ def lenstra_elliptic_get_factor_one(n, b = 100, debug = 1)
         puts "#{k}! * #{pt} = #{cur}"
       end
     end
-  rescue Exception => ex
+  rescue => ex
     f = ex.message.split(" ")[0].to_i
     if f >= 2 && f < n
       if debug >= 1

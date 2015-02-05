@@ -2,10 +2,12 @@
 require_relative "./prime.rb"
 require_relative "./gcd.rb"
 
+
+
 def invmod(a, p)
   g, i = ext_gcd(a, p)
   if g != 1
-    raise Exception.new("#{g} | #{p}")
+    raise StandardError.new("#{g} | #{p}")
   end
   return i
 end
