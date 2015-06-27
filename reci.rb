@@ -1,3 +1,4 @@
+require_relative './gcd.rb'
 require_relative './prime.rb'
 
 def quad_res_rat(a,p)
@@ -21,4 +22,48 @@ def quad_res_rat(a,p)
 	else
 		return r
 	end
+end
+
+# not verified for b < 0
+def jacobi_symbol(a, b)
+  tbl = [0, 1, 0, -1, 0, -1, 0, 1]
+  s = 1
+  if b < 0
+    if a < 0
+      s = -1
+    end
+    b = -b
+  end
+  v = 0
+  if a % 2 == 0 && b % 2 == 0
+    return 0
+  end
+  while b % 2 == 0
+    b /= 2
+    v = 1 - v
+  end
+  if (v == 1)
+    s *= tbl[a % 8]
+  end
+  while true
+    v = 0
+    a %= b
+    if a == 0
+      break
+    end
+    while a % 2 == 0
+      a /= 2
+      v = 1 - v
+    end
+    if (v == 1)
+      s *= tbl[b % 8]
+    end
+    if (a & b & 3) == 3
+      s = -s
+    end
+    r = a
+    a = b
+    b = r
+  end
+  return (if b == 1 then s else 0 end)
 end
