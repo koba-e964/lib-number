@@ -14,24 +14,23 @@ def divmod(a,b,p)
 	(a*invmod(b,p))%p
 end
 
+# Represents y^2 = x^3 + a * x + ? (mod p)
 class EllipticCurve
-  attr_accessor :curve
-  def initialize(curve)
-    @curve = curve.clone
+  attr_reader :p, :a
+  def initialize(p, a)
+    @p = p
+    @a = a
   end
   def affine_equal(p1,p2)
-    p = curve[0]
     (p1[0] - p2[0]) % p == 0 and (p1[1] - p2[1]) % p == 0
   end
   def affine_add(p1,p2)
-    p=@curve[0]
     if p1.length==0 #infinity
       return p2
     elsif p2.length==0
       return p1
     end
     grad=0
-    a = @curve[1]
     if affine_equal(p1, p2)
       if p1[1] % p == 0
         return []
@@ -56,7 +55,6 @@ class EllipticCurve
       return []
     end
     a=point.clone
-    p = @curve[0]
     a[1] = (p - a[1]) % p
     return a
   end
@@ -81,16 +79,12 @@ class EllipticCurve
     sum
   end
   def affine_projective_equal(nP,pP)
-    p=@curve[0]
     return (nP[0]*pP[2]-pP[0])%p==0 && (nP[1]*pP[2]-pP[1])%p==0
   end
   def projective_equal(p0, p1)
-    p = @curve[0]
     return (p0[0]*p1[2]-p0[2]*p1[0])%p==0 && (p0[1]*p1[2]-p0[2]*p1[1])%p==0 
   end
   def projective_double(point)
-    p=@curve[0]
-    a=@curve[1]
     mu=(2*point[1]*point[2])%p
     lambda=(3*point[0]*point[0]+a*point[2]*point[2])%p
     gamma=(point[1]*mu)%p
@@ -103,7 +97,6 @@ class EllipticCurve
   end
 
   def projective_add(p0,p1)
-    p=@curve[0]
     if p0[2]%p==0
       return p1
     elsif p1[2]%p==0	
@@ -183,7 +176,7 @@ end
 include Math
 
 def getPrimePointType0(curve,debug=true) #searches for a point of order p
-  p=curve.curve[0]
+  p=curve.p
   trial=0
   while trial<10000
     init=[rand(p),rand(p)]
@@ -206,7 +199,7 @@ end
 
 def testType0()
   for i in 10..25
-    curve=EllipticCurve.new([getRandomPrime(i),20])
+    curve=EllipticCurve.new(getRandomPrime(i), 20)
     trial=0
     while 1
       res=getPrimePointType0(curve,false)
@@ -216,7 +209,7 @@ def testType0()
       end
       trial+=10000
     end
-    puts "p=#{curve.curve[0]},trial=#{trial}"
+    puts "p=#{curve.p},trial=#{trial}"
   end
 end
 
@@ -233,7 +226,7 @@ def getNearPrime(p,x)
 end
 
 def getPrimePointType1(curve,tnum=100,debug=true)
-  p = curve.curve[0]
+  p = curve.p
   x=(3*(log p)).to_i
   ary=[]
   while ary.length==0
@@ -271,7 +264,7 @@ def testType1()
   for i in 10..20
     sum=0
     for j in 1..100
-      curve=EllipticCurve.new([getRandomPrime(i), 20])
+      curve=EllipticCurve.new(getRandomPrime(i), 20)
       trial=0
       while 1
 	num=10000
@@ -284,6 +277,6 @@ def testType1()
       end
       sum+=trial
     end
-    puts "p=#{curve.curve[0]},trial=#{sum/100.0}"
+    puts "p=#{curve.p},trial=#{sum/100.0}"
   end
 end

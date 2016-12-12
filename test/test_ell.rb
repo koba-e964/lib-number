@@ -5,7 +5,7 @@ class TestElliptic < Test::Unit::TestCase
   def test_projective_multiplication_random()
     for trial in 0..499
       p = getRandomPrime 30
-      curve = EllipticCurve.new([p,101])
+      curve = EllipticCurve.new(p, 101)
       point=[rand(p), rand(p)]
       num=rand(p)
       res1 = curve.affine_mul(point, num)
@@ -17,7 +17,7 @@ class TestElliptic < Test::Unit::TestCase
   def test_projective_doubling_random()
     for trial in 0..499
       p = getRandomPrime 30
-      curve = EllipticCurve.new([p,101])
+      curve = EllipticCurve.new(p, 101)
       point=[rand(p), rand(p)]
       res1 = curve.affine_mul(point, 2)
       res2 = curve.projective_double(affine_to_projective(point))
