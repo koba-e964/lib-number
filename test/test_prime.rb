@@ -16,6 +16,6 @@ class TestPrime < Test::Unit::TestCase
   end
   def test_factorize_semiprime
     try_semiprime(997, 1019, 1.0)
-    try_semiprime(18743117, 26496641, 4.0)
+    try_semiprime(18743117, 26496641, nil)
   end
 end
