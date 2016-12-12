@@ -1,5 +1,5 @@
 require_relative './gcd.rb'
-
+require_relative './factor.rb'
 
 
 def modPower(a,b,mod)
@@ -114,26 +114,44 @@ def get_power(num,p)
 	[num,cnt]
 end
 def factorize(num)
-	if num<0
-		return [[-1, 1]] + factorize(-num)
-	elsif num==0
-		return [[0,1]]
-	elsif num==1
-		return []
-	elsif mr_prime num
-		return [[num,1]]
-	else
-		i=2
-		while i*i<=num
-			if num%i==0
-				tmp=get_power(num,i)
-				return [[i,tmp[1]]]+factorize(tmp[0])
-			end
-			i+=1
-		end
-		return [[num,1]]
-	end
-	return nil
+  if num<0
+    return [[-1, 1]] + factorize(-num)
+  end
+  if num==0
+    return [[0,1]]
+  end
+  i=2
+  res = []
+  while i <= 10000 && i * i <= num
+    cnt = 0
+    while num%i==0
+      cnt += 1
+      num /= i
+    end
+    if cnt > 0
+      res += [[i, cnt]]
+    end
+    if i == 2
+      i = 3
+    else
+      i += 2
+    end
+  end
+  if num == 1
+    return res
+  end
+  if mr_prime(num)
+    return res + [[num,1]]
+  end
+  pf = lenstra_elliptic_factorize(num, 0)
+  hash = {}
+  for v in pf
+    if not hash[v]
+      hash[v] = 0
+    end
+    hash[v] += 1
+  end
+  return res + hash.to_a
 end
 
 def gen_test(n,radix=10)

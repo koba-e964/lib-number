@@ -30,19 +30,19 @@ def lenstra_elliptic_get_factor_one(n, b = 100, debug = 1)
 end
 
 def lenstra_elliptic_get_factor_one_pro(n, b = 100, debug = 1)
-  curve = [n, rand(n)]
+  curve = EllipticCurve.new(n, rand(n))
   pt = [rand(n), rand(n), 1]
   cur = pt
   ctrial = 0
   
-  res = proMul(curve, pt, n)
+  res = curve.projective_mul(pt, n)
   g = gcd(res[2], n)
   if g >= 2 && g < n
     return [g, n / g]
   end
   for k in 2 .. b
     ctrial = k
-    cur = proMul(curve, cur, k)
+    cur = curve.projective_mul(cur, k)
     if debug >= 2
       puts "#{k}! * #{pt} = #{cur}"
     end
