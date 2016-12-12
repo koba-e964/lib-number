@@ -209,7 +209,7 @@ class Field
 	def canon(alpha) #basis: 1,theta,...,theta^(dim-1)
 		rem=poly_div(alpha,self.f)[1]
 		while(rem.size<dim())
-			rem<<0
+			rem << 0
 		end
 		return rem
 	end
