@@ -1,0 +1,7 @@
+language: ruby
+rvm:
+  - 2.2
+  - jruby
+install: gem install test-unit
+script:
+- ruby test/run_test.rb
