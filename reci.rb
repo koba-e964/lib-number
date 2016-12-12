@@ -24,10 +24,12 @@ def quad_res_rat(a,p)
 	end
 end
 
-# not verified for b < 0
-def jacobi_symbol(a, b)
+def kronecker_symbol(a, b)
   tbl = [0, 1, 0, -1, 0, -1, 0, 1]
   s = 1
+  if b == 0
+    return a * a == 1 ? 1 : 0
+  end
   if b < 0
     if a < 0
       s = -1
