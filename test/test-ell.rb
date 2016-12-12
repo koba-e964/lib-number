@@ -1,6 +1,5 @@
 require 'test/unit'
-require_relative './ell.rb'
-require_relative './prime.rb'
+require_relative '../ell.rb'
 
 class TestElliptic < Test::Unit::TestCase
   def test_projective_multiplication_random()
