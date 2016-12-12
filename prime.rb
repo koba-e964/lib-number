@@ -115,7 +115,7 @@ def get_power(num,p)
 end
 def factorize(num)
 	if num<0
-		return [[-1,1],factorize(-num)]
+		return [[-1, 1]] + factorize(-num)
 	elsif num==0
 		return [[0,1]]
 	elsif num==1
