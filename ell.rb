@@ -163,33 +163,6 @@ def proMul(curve,point,n)
 	sum
 end
 
-def proDoubleChecker()
-	for trial in 0..99
-		p=getMRPrime 30
-		curve=[p,101]
-		point=[rand(p) , rand(p)]
-		res1=mul(curve,point,2)
-		res2=proDouble(curve,toPro(point))
-		if !npEqual(curve,res1,res2)
-			puts "not equal@proDoubleChecker, #{point}*2,#{res1}!=#{res2}"
-		end
-	end
-end
-
-def proMulChecker()
-	for trial in 0..99
-		p=getMRPrime 30
-		curve=[p,101]
-		point=[rand(p) , rand(p)]
-		num=rand(p)
-		res1=mul(curve,point,num)
-		res2=proMul(curve,toPro(point),num)
-		if !npEqual(curve,res1,res2)
-			puts "not equal@proDoubleChecker, #{point}*2,#{res1}!=#{res2}"
-		end
-	end
-end
-
 def period(curve,point)
 	if point.length==0
 		return 1
