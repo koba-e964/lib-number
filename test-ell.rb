@@ -9,9 +9,9 @@ class TestElliptic < Test::Unit::TestCase
       curve=[p,101]
       point=[rand(p), rand(p)]
       num=rand(p)
-      res1=mul(curve,point,num)
-      res2=proMul(curve,toPro(point),num)
-      assert(npEqual(curve,res1,res2),
+      res1=ell_mul(curve, point, num)
+      res2=proMul(curve, affine_to_projective(point), num)
+      assert(affine_projective_equal(curve,res1,res2),
 	     "not equal, #{point}*#{num},#{res1}!=#{res2}")
     end
   end
@@ -20,9 +20,9 @@ class TestElliptic < Test::Unit::TestCase
       p = getRandomPrime 30
       curve=[p, 101]
       point=[rand(p), rand(p)]
-      res1=mul(curve, point, 2)
-      res2=proDouble(curve, toPro(point))
-      assert(npEqual(curve,res1,res2),
+      res1=ell_mul(curve, point, 2)
+      res2=proDouble(curve, affine_to_projective(point))
+      assert(affine_projective_equal(curve, res1, res2),
 	     "not equal, #{point}*2,#{res1}!=#{res2}")
     end
   end

@@ -15,78 +15,75 @@ end
 def divmod(a,b,p)
 	(a*invmod(b,p))%p
 end
-def equal(curve,p1,p2)
-	p=curve[0]
-	(p1[0]-p2[0])%p==0 and (p1[1]-p2[1])%p==0
+def ell_equal(curve,p1,p2)
+  p = curve[0]
+  (p1[0] - p2[0]) % p == 0 and (p1[1] - p2[1]) % p == 0
 end
 
-def add(curve,p1,p2)
-	p=curve[0]
-	#if !mr_prime(p)
-		#return nil
-	#end
-	if p1.length==0 #infinity
-		return p2
-	elsif p2.length==0
-		return p1
-	end
-	grad=0
-	a=curve[1]
-	if equal curve,p1,p2
-		if p1[1]%p==0
-			return []
-		else
-			grad=divmod(3*p1[0]*p1[0] + a,2*p1[1],p)
-		end
-	else
-		if (p1[0]-p2[0])%p==0
-			return []
-		end
-		grad=divmod(p1[1]-p2[1],p1[0]-p2[0],p)
-	end
-	p3=[0,0]
-	p3[0]=grad*grad-p1[0]-p2[0]
-	p3[0]%=p
-	p3[1]=-p1[1]-grad*(p3[0]-p1[0])
-	p3[1]%=p
-	return p3
+def ell_add(curve,p1,p2)
+  p=curve[0]
+  if p1.length==0 #infinity
+    return p2
+  elsif p2.length==0
+    return p1
+  end
+  grad=0
+  a=curve[1]
+  if ell_equal curve,p1,p2
+    if p1[1]%p==0
+      return []
+    else
+      grad=divmod(3*p1[0]*p1[0] + a,2*p1[1],p)
+    end
+  else
+    if (p1[0]-p2[0])%p==0
+      return []
+    end
+    grad=divmod(p1[1]-p2[1],p1[0]-p2[0],p)
+  end
+  p3=[0,0]
+  p3[0]=grad*grad-p1[0]-p2[0]
+  p3[0]%=p
+  p3[1]=-p1[1]-grad*(p3[0]-p1[0])
+  p3[1]%=p
+  return p3
 end
-def inv(point)
-	if point.length==0
-		return []
-	end
-	a=point.clone
-	a[1]*=-1
-	return a
+def ell_inv(point)
+  if point.length==0
+    return []
+  end
+  a=point.clone
+  a[1]*=-1
+  return a
 end
-def mul(curve,point,n)
-	sum=[]
-	if n>0
-		p=point
-	elsif n<0
-		n=-n
-		p=inv(point)
-	else
-		return []
-	end
-	cur=p
-	while n>0
-		if n%2==1
-			sum=add curve,sum,cur
-		end
-		cur=add curve,cur,cur
-		n/=2
-	end
-	sum
+def ell_mul(curve,point,n)
+  sum=[]
+  if n>0
+    p = point
+  elsif n<0
+    n = -n
+    p = ell_inv(point)
+  else
+    return []
+  end
+  cur = p
+  while n > 0
+    if n % 2 == 1
+      sum = ell_add(curve, sum, cur)
+    end
+    cur = ell_add(curve, cur, cur)
+    n /= 2
+  end
+  sum
 end
 
-def toPro(point)
-	point+[1]
+def affine_to_projective(point)
+  point+[1]
 end
 
-def npEqual(curve,nP,pP)
-	p=curve[0]
-	return (nP[0]*pP[2]-pP[0])%p==0 && (nP[1]*pP[2]-pP[1])%p==0
+def affine_projective_equal(curve,nP,pP)
+  p=curve[0]
+  return (nP[0]*pP[2]-pP[0])%p==0 && (nP[1]*pP[2]-pP[1])%p==0
 end
 def proEqual(curve,p0,p1)
 	p=curve[0]
@@ -149,7 +146,7 @@ def proMul(curve,point,n)
 		cur=point
 	elsif n<0
 		n=-n
-		cur=inv(point)
+		cur=ell_inv(point)
 	else
 		return [1,1,0]
 	end
@@ -170,7 +167,7 @@ def period(curve,point)
 	num=1
 	cur=point
 	while cur.length!=0
-		cur=add curve,cur,point
+		cur=ell_add curve,cur,point
 		num+=1
 	end
 	return num
@@ -186,7 +183,7 @@ def getPrimePoint(curve)
 	while trial>0
 		init=[rand(p),rand(p)]
 		puts "trial:#{100-trial},selection=(#{init[0]},#{init[1]})"
-		cur=mul(curve,init,n_0)
+		cur=ell_mul(curve,init,n_0)
 		for i in 0..4*sp
 			if cur.length==0
 				#period=n_0+i
@@ -198,7 +195,7 @@ def getPrimePoint(curve)
 				end
 				break
 			end
-			cur=add(curve,cur,init)
+			cur=ell_add(curve,cur,init)
 		end
 		trial-=1
 	end
@@ -210,7 +207,7 @@ def getPrimePointType0(curve,debug=true) #searches for a point of order p
 	while trial<10000
 		init=[rand(p),rand(p)]
 		#puts "trial:#{trial},selection=(#{init[0]},#{init[1]})"
-		result=mul(curve,init,p)
+		result=ell_mul(curve,init,p)
 		if result.length==0
 			#period=p
 			if debug
