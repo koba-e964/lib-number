@@ -18,4 +18,29 @@ class TestPrime < Test::Unit::TestCase
     try_semiprime(997, 1019, 1.0)
     try_semiprime(18743117, 26496641, nil)
   end
+  def test_prime_semiprime
+    # Ten 100-bit prime numbers
+    factor_base = [982731230891153517077233520749,
+                   664451998196588992770553537109,
+                   738955130234353657237963452989,
+                   1084919827224585772475482624259,
+                   1047816224372892606548366771033,
+                   1103341343592365283696947892049,
+                   1245373428895684332114563596759,
+                   847035519730276667878191297097,
+                   709655954925957715076615388101,
+                   1158127966728659727624549102397]
+    for f in factor_base
+      for g in factor_base
+        assert_equal(false, mr_prime(f * g))
+      end
+    end
+    for f in factor_base
+      for g in factor_base
+        for h in factor_base
+          assert_equal(false, mr_prime(f * g * h))
+        end
+      end
+    end
+  end
 end
