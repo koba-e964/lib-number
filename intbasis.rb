@@ -37,7 +37,7 @@ def p_maximal_order(k,p,n)
 			alpha_p_mod=alpha_p.map{|v|v%p}
 			puts alpha.inspect+"^#{p**e}(mod #{p})="+alpha_p_mod.inspect
 			frob_init << alpha_p_mod
-			frob_o<<(Matrix.row_vector(alpha_p)*basis.inv).to_a[0].map{|v|v.to_i%p}
+			frob_o << (Matrix.row_vector(alpha_p)*basis.inv).to_a[0].map{|v|v.to_i%p}
 		end
 		puts frob_o.inspect
 		kernel=kernel_mod(frob_o,p)
@@ -58,49 +58,54 @@ def p_maximal_order(k,p,n)
 	nil
 end
 
-#ary:array representing matrix
-#mod:prime
-def kernel_mod(ary,mod)
-	ary=ary.clone
-	n=ary.size
-	unit=Array.new(n).map{|v|Array.new(n,0)}
-	for i in 0...n
-		unit[i][i]=1
-	end
-	for i in 0...n
-		ary[i].map!{|v|v%mod}
-	end
-	for i in 0...n
-		k=0
-		while ary[i][k]==0 && k<n
-			k+=1
-		end
-		if k==n
-			break
-		end
-		invc=ext_gcd(ary[i][k],mod)[1]%mod
-		for r in 0...n
-			if r==i
-				next
-			end
-			q=-ary[r][k]*invc
-			q%=mod
-			for j in 0...n
-				ary[r][j]+=q*ary[i][j]
-				ary[r][j]%=mod
-				unit[r][j]+=q*unit[i][j]
-				unit[r][j]%=mod
-			end
-		end
-	end
-	puts "unit="+unit.inspect+", ary="+ary.inspect
-	res=[]
-	for i in 0...n
-		if(ary[i]==Array.new(n,0))
-			res << unit[i]
-		end
-	end
-	return res
+# computes a basis of {x | x A = 0}, represented by an array of row vectors
+# ary:array representing matrix
+# mod:prime
+def kernel_mod(ary, mod, debug = false)
+  ary=ary.clone
+  ary.map!{|v| v = v.clone } # Gain a deep copy of ary
+  n=ary.size
+  m = ary[0].size
+  unit=Array.new(n).map{|v|Array.new(n,0)}
+  for i in 0...n
+    unit[i][i]=1
+  end
+  for i in 0...n
+    ary[i].map!{|v|v%mod}
+  end
+  for i in 0...n
+    k=0
+    while ary[i][k]==0 && k<m
+      k+=1
+    end
+    if k==m
+      break
+    end
+    invc=ext_gcd(ary[i][k],mod)[1]%mod
+    for r in 0...n
+      if r==i
+	next
+      end
+      q=-ary[r][k]*invc
+      q%=mod
+      for j in 0...m
+	ary[r][j]+=q*ary[i][j]
+	ary[r][j]%=mod
+	unit[r][j]+=q*unit[i][j]
+	unit[r][j]%=mod
+      end
+    end
+  end
+  if debug
+    puts "unit="+unit.inspect+", ary="+ary.inspect
+  end
+  res=[]
+  for i in 0...n
+    if(ary[i]==Array.new(m,0))
+      res << unit[i]
+    end
+  end
+  return res
 end
 
 #order, suborder is given by matrice
