@@ -52,21 +52,3 @@ def modsqrt(a,p)
   return x
 end
 
-def modsqrt_test(size=80)
-  if(size<=0)
-    size=80
-  end
-  trial=100
-  p=getRandomPrime(size)
-  puts "p="+p.to_s
-  for i in 0...trial
-    if(i%(trial/12)==0)
-      puts "test:"+i.to_s+"/"+trial.to_s
-    end
-    a=rand(p)
-    b=modPower(a,2,p)
-    x=modsqrt(b,p)
-    raise "error:x != \pm a" unless x==a||x==p-a
-  end
-  puts "ok(modsqrt_test)"
-end
