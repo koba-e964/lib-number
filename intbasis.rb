@@ -5,15 +5,15 @@ require './field.rb'
 require './prime_util.rb'
 
 def integral_basis(k)
-	raise Exception unless k.instance_of?(Field)
-	disc=k.disc_gen()
-	fctr=factorize(disc.abs) #2æˆÈã‚Ìw”‚ğ‚Â‘fˆö”‚ğ’T‚·
-	index=1
-	for p,n in fctr
-		#get p-maximal order of k.
-		p_maximal_order(k,p,n)
-	end
-	nil
+  raise Exception unless k.instance_of?(Field)
+  disc=k.disc_gen()
+  fctr=factorize(disc.abs) #2æˆÈã‚Ìw”‚ğ‚Â‘fˆö”‚ğ’T‚·
+  index=1
+  for p,n in fctr
+    #get p-maximal order of k.
+    puts p_maximal_order(k,p,n).inspect
+  end
+  nil
 end
 
 #round 2 method
@@ -45,17 +45,31 @@ def p_maximal_order(k,p,n)
 		i_p=Matrix.rows(i_p) #basis:order
 		puts "I_#{p}="+i_p.inspect
 		i_p_init=i_p*basis #basis:initial
+                prod_ip_mat = Array.new(d){|v| []}
 		for i in 0...d
-			for j in 0...d
-				prod_init=k.mult_mod(i_p_init.to_a[i],i_p_init.to_a[j],p*p)
-				prod_init=k.canon(prod_init)
-				prod_ip=Matrix.row_vector(prod_init)*i_p_init.inv
-				puts "e[#{i}]*e[#{j}]=(init)"+prod_init.inspect+", (I_p)"+prod_ip.inspect
-			end
+		  for j in 0...d
+		    prod_init=k.mult_mod(i_p_init.to_a[i],i_p_init.to_a[j],p*p)
+		    prod_init=k.canon(prod_init)
+		    prod_ip=Matrix.row_vector(prod_init)*i_p_init.inv
+		    puts "e[#{i}]*e[#{j}]=(init)"+prod_init.inspect+", (I_p)="+prod_ip.inspect
+                    prod_ip_mat[j] += prod_ip.to_a[0].map{|w| v = w.to_i; raise Exception unless w == v; v }
+		  end
 		end
+                p prod_ip_mat
+                ker = kernel_mod(prod_ip_mat, p)
+                for i in 0 ... d
+                  one_hot = Array.new(d, 0)
+                  one_hot[i] = p
+                  ker << one_hot
+                end
+                ker = ker.map{|row_vec| Matrix.row_vector(row_vec) * i_p / Rational(p, 1) }
+                puts "kernel(U_#{p}) = #{ker.inspect}"
+                basis = ker
+                # TODO reduce basis
 		n=0 #to terminate loop
+                
 	end
-	nil
+	basis
 end
 
 # computes a basis of {x | x A = 0}, represented by an array of row vectors
@@ -88,9 +102,11 @@ def kernel_mod(ary, mod, debug = false)
       end
       q=-ary[r][k]*invc
       q%=mod
-      for j in 0...m
+      for j in 0 ... m
 	ary[r][j]+=q*ary[i][j]
 	ary[r][j]%=mod
+      end
+      for j in 0 ... n
 	unit[r][j]+=q*unit[i][j]
 	unit[r][j]%=mod
       end
@@ -101,7 +117,7 @@ def kernel_mod(ary, mod, debug = false)
   end
   res=[]
   for i in 0...n
-    if(ary[i]==Array.new(m,0))
+    if (0 ... m).all?{|v| ary[i][v] == 0}
       res << unit[i]
     end
   end

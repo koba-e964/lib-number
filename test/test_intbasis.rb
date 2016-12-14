@@ -34,4 +34,13 @@ class TestIntBasis < Test::Unit::TestCase
       assert_equal(Array.new(3, 0), row_vec_mat_mul_mod(row_vec, ary, p))
     end
   end
+
+  def test_kernel_mod_2
+    ary = [[2, 1, -1, 2, 1, -1, 3, 0, 0], [2, 1, -1, 8, 4, -4, 0, 3, 0], [3, 0, 0, 0, 3, 0, 0, 0, 0]]
+    p = 3
+    kernel = kernel_mod(ary, p)
+    for row_vec in kernel
+      assert_equal(Array.new(9, 0), row_vec_mat_mul_mod(row_vec, ary, p))
+    end
+  end
 end
