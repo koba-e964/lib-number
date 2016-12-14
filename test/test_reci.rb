@@ -1,6 +1,6 @@
 require 'test/unit'
-require_relative '../reci.rb'
-require_relative '../prime.rb'
+require 'reci.rb'
+require 'prime_util.rb'
 
 class TestReciprocity < Test::Unit::TestCase
   def test_kronecker_symbol

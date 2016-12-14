@@ -1,5 +1,5 @@
 require 'test/unit'
-require_relative '../prime.rb'
+require 'prime_util.rb'
 require 'timeout'
 
 class TestPrime < Test::Unit::TestCase

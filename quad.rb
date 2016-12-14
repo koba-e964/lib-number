@@ -1,4 +1,5 @@
-require_relative "./prime.rb"
+# coding: cp932
+require_relative "./prime_util.rb"
 def abs(n)
 	if n<0
 		-n

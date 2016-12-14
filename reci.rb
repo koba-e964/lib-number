@@ -1,5 +1,5 @@
 require_relative './gcd.rb'
-require_relative './prime.rb'
+require_relative './prime_util.rb'
 
 def quad_res_rat(a,p)
 	if p%2==0

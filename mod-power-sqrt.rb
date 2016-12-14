@@ -1,4 +1,4 @@
-require_relative './prime.rb'
+require_relative './prime_util.rb'
 require_relative './modsqrt.rb'
 require_relative './gcd.rb'
 

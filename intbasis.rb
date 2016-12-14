@@ -2,7 +2,7 @@
 require 'matrix'
 
 require './field.rb'
-require './prime.rb'
+require './prime_util.rb'
 
 def integral_basis(k)
 	raise Exception unless k.instance_of?(Field)

@@ -1,5 +1,5 @@
 require_relative "./ell.rb"
-require_relative "./prime.rb"
+require_relative "./prime_util.rb"
 def lenstra_elliptic_get_factor_one(n, b = 100, debug = 1)
   curve = [n, rand(n)]
   pt = [rand(n), rand(n)]

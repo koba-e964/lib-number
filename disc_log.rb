@@ -1,4 +1,4 @@
-load './prime.rb'
+load './prime_util.rb'
 
 #checks whether g is a primitive root of (Z/pZ)^*
 #the primality of p is not checked in this function.
