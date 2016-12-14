@@ -1,7 +1,7 @@
 # -*- coding: cp932 -*-
 require_relative './prime.rb'
 require_relative './reci.rb'
-require_relvative './alg-lin.rb'
+require_relative './alg-lin.rb'
 
 $debug_field=false
 

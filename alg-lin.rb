@@ -1,4 +1,5 @@
-require_relative 'matrix'
+# coding: cp932
+require 'matrix'
 require_relative 'field.rb'
 require_relative './gcd.rb'
 
