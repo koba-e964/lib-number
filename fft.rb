@@ -96,19 +96,3 @@ def schoenhage_strassen(a, b)
   end
   return acc
 end
-
-def test_ss(trial=100, len=100)
-  for i in 0 ... trial
-    a = rand(1 << len)
-    b = rand(1 << len)
-    t0 = Time.now
-    res_ordinary = a * b
-    t1 = Time.now
-    res_schoenhage = schoenhage_strassen(a, b)
-    t2 = Time.now
-    if res_schoenhage != res_ordinary
-      raise Exception.new("Error: a = #{a}, b = #{b}")
-    end
-    puts "ordinary:#{t1-t0}sec, schoenhage:#{t2-t1}sec"
-  end
-end

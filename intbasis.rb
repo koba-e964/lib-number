@@ -1,3 +1,4 @@
+# coding: cp932
 require 'matrix'
 
 require './field.rb'
@@ -35,7 +36,7 @@ def p_maximal_order(k,p,n)
 			alpha_p=k.canon(alpha_p)
 			alpha_p_mod=alpha_p.map{|v|v%p}
 			puts alpha.inspect+"^#{p**e}(mod #{p})="+alpha_p_mod.inspect
-			frob_init<<alpha_p_mod
+			frob_init << alpha_p_mod
 			frob_o<<(Matrix.row_vector(alpha_p)*basis.inv).to_a[0].map{|v|v.to_i%p}
 		end
 		puts frob_o.inspect
@@ -96,7 +97,7 @@ def kernel_mod(ary,mod)
 	res=[]
 	for i in 0...n
 		if(ary[i]==Array.new(n,0))
-			res<<unit[i]
+			res << unit[i]
 		end
 	end
 	return res
