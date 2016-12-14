@@ -2,7 +2,7 @@ language: ruby
 rvm:
   - 2.2
   - 2.3
-  - jruby
+  - 2.4.0-rc1
   - jruby-9.1.6.0
 install: gem install test-unit
 script:
