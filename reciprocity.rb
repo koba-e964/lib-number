@@ -1,28 +1,25 @@
 require_relative './gcd.rb'
-require_relative './prime_util.rb'
+require_relative './number_util.rb'
 
+# It is promised that p is a prime.
 def quad_res_rat(a,p)
-	if p%2==0
-		if p==2
-			r=a%8
-			if r%2==0	
-				return 0
-			elsif r==-1 || r==7
-				return 1
-			else
-				return -1
-			end
-		else
-			return nil
-		end
-	end
-	r=NumberUtil::modPower(a,(p-1)/2,p)
-	if r==p-1
-		return -1
-	else
-		return r
-	end
+  if p % 2 == 0
+    if p != 2
+      return nil
+    end
+    r = a % 8
+    if r % 2 == 0	
+      return 0
+    elsif r == 7
+      return 1
+    else
+      return -1
+    end
+  end
+  r = NumberUtil::modPower(a, (p-1)/2, p)
+  return r == p - 1 ? -1 : r
 end
+
 
 def kronecker_symbol(a, b)
   tbl = [0, 1, 0, -1, 0, -1, 0, 1]
@@ -67,5 +64,5 @@ def kronecker_symbol(a, b)
     a = b
     b = r
   end
-  return (if b == 1 then s else 0 end)
+  return b == 1 ? s : 0
 end

@@ -1,5 +1,5 @@
 require_relative './prime_util.rb'
-require_relative './reci.rb'
+require_relative './reciprocity.rb'
 
 def modsqrt(a,p)
   if p<0
