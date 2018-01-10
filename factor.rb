@@ -69,6 +69,10 @@ def lenstra_elliptic_get_factor(n, debug = 1)
     end
     return [n]
   end
+  ch_pow = check_power(n)
+  if ch_pow[1] >= 2
+    return [ch_pow[0]] * ch_pow[1]
+  end
   b = (2.0 ** sqrt(n.size * 8 * log2(n.size))).to_i
   t = 0
   while true
@@ -89,7 +93,7 @@ def lenstra_elliptic_factorize(n, debug = 1)
   n = n.abs
   rem = [n]
   while rem.size >= 1
-    q = rem[0]
+    q = rem.shift
     if debug >= 1
       puts "trying #{q}..."
     end
@@ -100,7 +104,6 @@ def lenstra_elliptic_factorize(n, debug = 1)
     else
       rem += res
     end
-    rem = rem[1 .. -1]
   end
   prime_factors.sort!
   return prime_factors

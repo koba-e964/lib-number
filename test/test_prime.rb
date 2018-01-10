@@ -43,4 +43,13 @@ class TestPrime < Test::Unit::TestCase
       end
     end
   end
+  def test_factorize_prime_power
+    assert_equal([[9986563, 2]], Timeout.timeout(1.0){
+                   factorize(9986563 ** 2)
+                 })
+  end
+  def test_check_power
+    assert_equal([9986563, 2], check_power(9986563 ** 2))
+    assert_equal([10, 400], check_power(10000 ** 100))
+  end
 end

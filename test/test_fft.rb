@@ -4,7 +4,7 @@ require 'fft.rb'
 class TestFFT < Test::Unit::TestCase
   def test_schoenhage_strassen_random
     trial=100
-    len=10000
+    len=1000
     for i in 0 ... trial
       a = rand(1 << len)
       b = rand(1 << len)
