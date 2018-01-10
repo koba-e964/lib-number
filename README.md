@@ -1,0 +1,1 @@
+Status of branch `master`: [![Build Status](https://travis-ci.org/koba-e964/lib-number.svg?branch=master)](https://travis-ci.org/koba-e964/lib-number)
