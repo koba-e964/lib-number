@@ -49,15 +49,21 @@ def check_power(n)
   end
   x = n
   b = 1
+  c = 2
   while true
     found = false
-    for c in 2 .. (8 * x.size)
+    while c <= 8 * x.size
       res = is_bth_power(x, c)
       if res
         x = res
         b *= c
         found = true
         break
+      end
+      if c >= 3
+        c += 2
+      else
+        c += 1
       end
     end
     if found

@@ -51,5 +51,9 @@ class TestPrime < Test::Unit::TestCase
   def test_check_power
     assert_equal([9986563, 2], check_power(9986563 ** 2))
     assert_equal([10, 400], check_power(10000 ** 100))
+    assert_equal([11, 3], check_power(1331))
+    assert_equal([1, 1], check_power(1))
+    assert_equal([0, 1], check_power(0))
+    assert_equal([7, 1], check_power(7))
   end
 end
