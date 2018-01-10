@@ -91,6 +91,12 @@ end
 def lenstra_elliptic_factorize(n, debug = 1)
   prime_factors = []
   n = n.abs
+  if n == 0
+    raise Exception.new("lenstra_elliptic_factorize(0)")
+  end
+  if n == 1
+    return []
+  end
   rem = [n]
   while rem.size >= 1
     q = rem.shift
