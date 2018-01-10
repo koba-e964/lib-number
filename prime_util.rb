@@ -1,5 +1,5 @@
 require_relative './gcd.rb'
-require_relative './factor.rb'
+require_relative './detail/lenstra_elliptic_factor.rb'
 
 
 def modPower(a,b,mod)
