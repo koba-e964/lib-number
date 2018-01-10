@@ -8,7 +8,7 @@ class TestModSqrt < Test::Unit::TestCase
     p=getRandomPrime(size)
     for i in 0...trial
       a=rand(p)
-      b=modPower(a,2,p)
+      b=NumberUtil::modPower(a,2,p)
       x=modsqrt(b,p)
       assert(x==a||x==p-a, "error:x != \pm a")
     end

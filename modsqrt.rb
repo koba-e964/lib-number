@@ -31,10 +31,10 @@ def modsqrt(a,p)
     m/=2
     e+=1
   end
-  x=modPower(a,(m-1)/2,p)
+  x=NumberUtil::modPower(a,(m-1)/2,p)
   y=(a*(x*x%p))%p
   x*=a;x%=p
-  z=modPower(b,m,p)
+  z=NumberUtil::modPower(b,m,p)
   while(y!=1)
     j=0
     t=y
@@ -43,7 +43,7 @@ def modsqrt(a,p)
       t=(t*t)%p
     end
     raise "j>=e" unless j<e
-    z=modPower(z,1<<(e-j-1),p)
+    z=NumberUtil::modPower(z,1<<(e-j-1),p)
     x=(x*z)%p
     z=(z*z)%p
     y=(y*z)%p

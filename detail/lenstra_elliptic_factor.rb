@@ -70,7 +70,7 @@ def lenstra_elliptic_get_factor(n, debug_level = 1)
     end
     return [n]
   end
-  ch_pow = check_power(n)
+  ch_pow = NumberUtil::check_power(n)
   if ch_pow[1] >= 2
     return [ch_pow[0]] * ch_pow[1]
   end

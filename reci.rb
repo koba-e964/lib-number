@@ -16,7 +16,7 @@ def quad_res_rat(a,p)
 			return nil
 		end
 	end
-	r=modPower(a,(p-1)/2,p)
+	r=NumberUtil::modPower(a,(p-1)/2,p)
 	if r==p-1
 		return -1
 	else
